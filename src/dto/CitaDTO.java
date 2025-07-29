@@ -1,30 +1,36 @@
-package modelo;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import modelo.Mascota;
+import modelo.Propietario;
+import modelo.Veterinario;
 
 /**
  *
  * @author MI PC
  */
-public class Cita implements Serializable{
-    
-    private static final long serialVersionUID = 1L;
-//------atributos-------------------------------
+public class CitaDTO  implements Serializable{
+    //------atributos-------------------------------
 
     private String fecha;
     private String hora;
-    private Mascota mascota;
-    private Propietario propietario;
-    private Veterinario veterinario;
+    private MascotaDTO mascota;
+    private PropietarioDTO propietario;
+    private VeterinarioDTO veterinario;
 //..............................................................................
     //------------lista estatica----------
-    public static ArrayList<Cita> listaCitas = new ArrayList<>();
+    public static ArrayList<CitaDTO> listaCitas = new ArrayList<>();
 //..............................................................................
 
     //--------------------constructor---------------------------------
 
-    public Cita(String fecha, String hora, Mascota mascota, Propietario propietario, Veterinario veterinario) {
+    public CitaDTO(String fecha, String hora, MascotaDTO mascota, 
+            PropietarioDTO propietario, VeterinarioDTO veterinario) {
         this.fecha = fecha;
         this.hora = hora;
         this.mascota = mascota;
@@ -50,39 +56,39 @@ public class Cita implements Serializable{
         this.hora = hora;
     }
 
-    public Mascota getMascota() {
+    public MascotaDTO getMascota() {
         return mascota;
     }
 
-    public void setMascota(Mascota mascota) {
+    public void setMascota(MascotaDTO mascota) {
         this.mascota = mascota;
     }
 
-    public Propietario getPropietario() {
+    public PropietarioDTO getPropietario() {
         return propietario;
     }
 
-    public void setPropietario(Propietario propietario) {
+    public void setPropietario(PropietarioDTO propietario) {
         this.propietario = propietario;
     }
 
-    public Veterinario getVeterinario() {
+    public VeterinarioDTO getVeterinario() {
         return veterinario;
     }
 
-    public void setVeterinario(Veterinario veterinario) {
+    public void setVeterinario(VeterinarioDTO veterinario) {
         this.veterinario = veterinario;
     }
 
-    public static ArrayList<Cita> getListaCitas() {
+    public static ArrayList<CitaDTO> getListaCitas() {
         return listaCitas;
     }
 
-    public static void setListaCitas(ArrayList<Cita> listaCitas) {
-        Cita.listaCitas = listaCitas;
+    public static void setListaCitas(ArrayList<CitaDTO> listaCitas) {
+        CitaDTO.listaCitas = listaCitas;
     }
-    
-        //---------metodo de la clase padre-----------
+
+    //---------metodo de la clase padre-----------
 //    @Override
 //    public String mostrarDetalle() {
 //        return "-----------------Cita:----------------------\n"
@@ -92,3 +98,4 @@ public class Cita implements Serializable{
 //                + "Veterinario: " + this.getVeterinario().getNombreV()+ "\n";
 //    }
 }
+

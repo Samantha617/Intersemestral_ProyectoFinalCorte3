@@ -4,15 +4,20 @@
  */
 package ventana;
 
-import dao.PropietarioDAO;
+import controlador.ControladorMascota;
+import controlador.ControladorVacuna;
+import dao.MascotaDAO;
+import dao.VacunaDAO;
 import dto.MascotaDTO;
 import dto.PropietarioDTO;
+import dto.VacunaDTO;
+import exception.DatoInvalidoException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Mascota;
-import modelo.Propietario;
 import modelo.Vacuna;
+import ventana.Ventana1;
 
 /**
  *
@@ -20,9 +25,11 @@ import modelo.Vacuna;
  */
 public class VentanaVacuna extends javax.swing.JFrame {
 
-    /**
-     * Creates new form VentanaMascota
-     */
+    private ControladorMascota controladorMasco = new ControladorMascota();
+    private MascotaDAO daoMasco = new MascotaDAO();
+    private ControladorVacuna controladorVacu = new ControladorVacuna();
+    private VacunaDAO daoVacu = new VacunaDAO();
+
 //---------------Constructor de la ventana-------------------------------
     public VentanaVacuna() {
         // Inicializa los componentes del formulario
@@ -335,163 +342,114 @@ public class VentanaVacuna extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-   try {
-        String fecha = txtFechaVacuna.getText().trim();
-        String lote = txtLote.getText().trim();
-        String nombreM = txtMascota.getText().trim();
-        String tipoVacuna = (String) cbTipoVacuna.getSelectedItem();
-        String proximaDosis = txtProximaDosis.getText().trim();
+        try {
+            String fecha = txtFechaVacuna.getText().trim();
+            String lote = txtLote.getText().trim();
+            String nombreM = txtMascota.getText().trim();
+            String tipo = (String) cbTipoVacuna.getSelectedItem();
+            String proxima = txtProximaDosis.getText().trim();
 
-        // Validación de campos vacíos
-        if (fecha.isEmpty() || lote.isEmpty() || nombreM.isEmpty() || tipoVacuna == null || proximaDosis.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            controladorVacu.guardarVacuna(fecha, lote, nombreM, tipo, proxima);
+            JOptionPane.showMessageDialog(this, "Vacuna registrada exitosamente");
+
+            limpiarCampos();
+            llenarTabla();
+
+        } catch (DatoInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error inesperado al guardar vacuna.", "Error", JOptionPane.ERROR_MESSAGE);
+
         }
 
-        // Buscar la mascota entre todos los propietarios registrados
-        Mascota mascotaEncontrada = null;
-        for (PropietarioDTO p : PropietarioDTO.listaPropietarios) {
-            for (Mascota m : p.getListaMascotas()) {
-                if (m.getNombreM().equalsIgnoreCase(nombreM)) {
-                    mascotaEncontrada = m;
-                    break;
-                }
-            }
-            if (mascotaEncontrada != null) break;
-        }
-
-        // Validar si se encontró la mascota
-        if (mascotaEncontrada == null) {
-            JOptionPane.showMessageDialog(this, "La mascota no esta registrada... Registrala primero",
-                    "Mascota no encontrada", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Crear el objeto vacuna
-        Vacuna vacuna = new Vacuna(fecha, lote, mascotaEncontrada, tipoVacuna, proximaDosis);
-
-        // Guardar en la lista estática y en el historial de la mascota
-        Vacuna.getListaVacunas().add(vacuna);
-        mascotaEncontrada.getHistorial().add(vacuna);
-
-        // Mostrar mensaje de éxito
-        JOptionPane.showMessageDialog(this,
-                "----------- Vacuna registrada:-----------\n"
-                + "Fecha: " + fecha + "\n"
-                + "Lote: " + lote + "\n"
-                + "Mascota: " + mascotaEncontrada.getNombreM() + "\n"
-                + "Tipo de Vacuna: " + tipoVacuna + "\n"
-                + "Próxima Dosis: " + proximaDosis,
-                "Registro exitoso", JOptionPane.INFORMATION_MESSAGE);
-
-        // Limpiar campos y actualizar tabla
-        limpiarCampos();
-        llenarTabla();
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al guardar la vacuna: " + e.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
-    }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         try {
-        String nombreM = txtMascota.getText().trim();
+            // Obtener el nombre ingresado en el campo de texto
+            String fechaVacuna = txtFechaVacuna.getText().trim();
 
-        if (nombreM.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingrese el nombre de la mascota para buscar.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Vacuna vacunaEncontrada = null;
-        for (Vacuna v : Vacuna.getListaVacunas()) {
-            if (v.getMascota().getNombreM().equalsIgnoreCase(nombreM)) {
-                vacunaEncontrada = v;
-                break;
+            // Validar que se haya ingresado un nombre
+            if (fechaVacuna.isEmpty()) {
+                throw new DatoInvalidoException("Ingrese la fecha de la vacuna que desea buscar.");
             }
-        }
 
-        if (vacunaEncontrada != null) {
-            txtFechaVacuna.setText(vacunaEncontrada.getFecha());
+            // Buscar la mascota por nombre usando el controlador
+            VacunaDTO vacunaEncontrada = controladorVacu.buscarVacuna(fechaVacuna);
+
+            // Mostrar los datos en los campos de texto
             txtLote.setText(vacunaEncontrada.getLote());
+            txtMascota.setText(vacunaEncontrada.getMascota().getNombreM());
             cbTipoVacuna.setSelectedItem(vacunaEncontrada.getTipoDeVacuna());
             txtProximaDosis.setText(vacunaEncontrada.getProximaDosis());
 
-            JOptionPane.showMessageDialog(this, "Vacuna encontrada y mostrada en los campos.", "exito", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "No se encontró vacuna registrada para esa mascota.", "No encontrado", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vacuna encontrada correctamente");
+
+        } catch (DatoInvalidoException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error al buscar la vacuna.", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al buscar la vacuna: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        try {
+       try {
+        String fecha = txtFechaVacuna.getText().trim();
+        String lote = txtLote.getText().trim();
         String nombreM = txtMascota.getText().trim();
+        String tipo = (String) cbTipoVacuna.getSelectedItem();
+        String proxima = txtProximaDosis.getText().trim();
 
-        if (nombreM.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingrese el nombre de la mascota para editar.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (fecha.isEmpty()) {
+            throw new DatoInvalidoException("Ingrese la fecha de la vacuna a editar.");
+        }
+
+        // Buscar la vacuna por fecha para asegurarse de que existe
+        VacunaDTO vacunaExistente = controladorVacu.buscarVacuna(fecha);
+        if (vacunaExistente == null) {
+            JOptionPane.showMessageDialog(this, "No se encontró una vacuna con esa fecha.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Vacuna vacunaEditar = null;
-        for (Vacuna v : Vacuna.getListaVacunas()) {
-            if (v.getMascota().getNombreM().equalsIgnoreCase(nombreM)) {
-                vacunaEditar = v;
-                break;
-            }
-        }
+        // Editar la vacuna
+        controladorVacu.editarVacuna(fecha, lote, nombreM, tipo, proxima);
+        JOptionPane.showMessageDialog(this, "Vacuna editada exitosamente");
 
-        if (vacunaEditar != null) {
-            vacunaEditar.setFecha(txtFechaVacuna.getText().trim());
-            vacunaEditar.setLote(txtLote.getText().trim());
-            vacunaEditar.setTipoDeVacuna((String) cbTipoVacuna.getSelectedItem());
-            vacunaEditar.setProximaDosis(txtProximaDosis.getText().trim());
+        limpiarCampos();
+        llenarTabla();
 
-            JOptionPane.showMessageDialog(this, "Vacuna editada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            llenarTabla();
-            limpiarCampos();
-        } else {
-            JOptionPane.showMessageDialog(this, "No se encontró vacuna para editar.", "No encontrado", JOptionPane.WARNING_MESSAGE);
-        }
-
+    } catch (DatoInvalidoException ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al editar la vacuna: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Error inesperado al editar vacuna.", "Error", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         try {
-        String nombreM = txtMascota.getText().trim();
+        String fechaVacuna = txtFechaVacuna.getText().trim();
 
-        if (nombreM.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingrese el nombre de la mascota para eliminar la vacuna.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (fechaVacuna.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese la fecha de la vacuna para eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Vacuna vacunaEliminar = null;
-        for (Vacuna v : Vacuna.getListaVacunas()) {
-            if (v.getMascota().getNombreM().equalsIgnoreCase(nombreM)) {
-                vacunaEliminar = v;
-                break;
-            }
-        }
+        boolean eliminado = controladorVacu.eliminarVacuna(fechaVacuna); 
 
-        if (vacunaEliminar != null) {
-            Vacuna.getListaVacunas().remove(vacunaEliminar);
-            vacunaEliminar.getMascota().getHistorial().remove(vacunaEliminar);
-
-            JOptionPane.showMessageDialog(this, "Vacuna eliminada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            llenarTabla();
+        if (eliminado) {
+            JOptionPane.showMessageDialog(this, "Vacuna eliminada exitosamente.", "exito", JOptionPane.INFORMATION_MESSAGE);
             limpiarCampos();
+            llenarTabla(); // <- Actualiza la tabla después de eliminar
         } else {
-            JOptionPane.showMessageDialog(this, "No se encontró vacuna para eliminar.", "No encontrado", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se encontró ninguna vacuna con esa fecha.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al eliminar la vacuna: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Error al intentar eliminar la vacuna: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
@@ -510,13 +468,14 @@ public class VentanaVacuna extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tblVacunas.getModel();
         modelo.setRowCount(0); // Limpia la tabla antes de llenarla
 
-        for (Vacuna vacuna : Vacuna.listaVacunas) {
+        for (VacunaDTO v : daoVacu.listar()) {
             modelo.addRow(new Object[]{
-                vacuna.getFecha(),
-                vacuna.getLote(),
-                vacuna.getMascota().getNombreM(),
-                vacuna.getTipoDeVacuna(),
-                vacuna.getProximaDosis()
+                v.getFechaVacuna(),
+                v.getLote(),
+                v.getMascota().getNombreM(),
+                v.getTipoDeVacuna(),
+                v.getProximaDosis()
+
             });
         }
     }

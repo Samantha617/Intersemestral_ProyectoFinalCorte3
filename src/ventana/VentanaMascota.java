@@ -5,18 +5,15 @@
 package ventana;
 
 import controlador.ControladorMascota;
-import controlador.ControladorPropietario;
 import dao.MascotaDAO;
-import dao.PropietarioDAO;
 import dto.MascotaDTO;
 import dto.PropietarioDTO;
 import exception.DatoInvalidoException;
-import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Mascota;
-import modelo.Propietario;
+
 
 /**
  *
@@ -26,8 +23,7 @@ public class VentanaMascota extends javax.swing.JFrame {
 
     private ControladorMascota controladorMasco = new ControladorMascota();
     private MascotaDAO daoMasco = new MascotaDAO();
-    private PropietarioDAO daoPropi = new PropietarioDAO();
-    private ControladorPropietario controladorPropi = new ControladorPropietario();
+    
     /**
      * Creates new form VentanaMascota
      */
@@ -389,8 +385,8 @@ public class VentanaMascota extends javax.swing.JFrame {
         }
 
         // Buscar la mascota por nombre usando el controlador
-        MascotaDTO encontrada = controladorMasco.buscarMascota(nombreM); // Este método debe existir en tu controlador
-
+        MascotaDTO encontrada = controladorMasco.buscarMascota(nombreM); 
+        
         if (encontrada != null) {
             // Si la mascota fue encontrada, mostrar sus datos en el formulario
             txtNombreMascota.setText(encontrada.getNombreM());
@@ -410,37 +406,39 @@ public class VentanaMascota extends javax.swing.JFrame {
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         try {
-            // Obtener el nombre de la mascota a eliminar desde el campo de búsqueda
-            String nombreM = txtNombreMascota.getText().trim();
+        String nombreM = txtNombreMascota.getText().trim();
+        String especie = (String) cbEspecie.getSelectedItem();
+        int edad = Integer.parseInt(txtEdad.getText().trim());
+        String raza = txtRaza.getText().trim();
+        int peso = Integer.parseInt(txtPeso.getText().trim());
+        String documento = txtNumeroDocumento.getText().trim();
+        String nombrePropietario = txtNombrePropietario.getText().trim();
 
-            // Validar que el campo no esté vacío
-            if (nombreM.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingresa el nombre de la mascota que deseas eliminar.");
-                return;
-            }
-
-            // Confirmar con el usuario antes de eliminar
-            int confirmacion = JOptionPane.showConfirmDialog(this,
-                    "¿Estas seguro de que deseas eliminar la mascota " + nombreM + "?",
-                    "Confirmar", JOptionPane.YES_NO_OPTION);
-
-            if (confirmacion != JOptionPane.YES_OPTION) {
-                return; // Cancelo la eliminacion
-            }
-
-            // Llamar al controlador para eliminar
-            boolean eliminado = controladorMasco.eliminarMascota(nombreM);
-
-            if (eliminado) {
-                JOptionPane.showMessageDialog(this, "Mascota eliminada correctamente");
-                limpiarCampos(); // Limpia los campos del formulario
-            } else {
-                JOptionPane.showMessageDialog(this, "No se encontro la mascota con ese nombre.");
-            }
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al intentar eliminar la mascota" + e.getMessage());
+        // Validar que el nombre no esté vacío
+        if (nombreM.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Primero busca una mascota existente para editar");
+            return;
         }
+
+        // Llamamos al controlador para editar
+        boolean editado = controladorMasco.editarMascota(nombreM, especie, edad, raza, peso, documento, nombrePropietario);
+
+        if (editado) {
+            JOptionPane.showMessageDialog(this, "Mascota editada correctamente.");
+            limpiarCampos();
+            llenarTabla();
+        } else {
+            JOptionPane.showMessageDialog(this, "No se encontró la mascota para editar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Edad y peso deben ser números enteros.");
+    } catch (DatoInvalidoException e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al intentar editar la mascota.");
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed

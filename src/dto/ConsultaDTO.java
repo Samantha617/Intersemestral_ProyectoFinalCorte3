@@ -1,33 +1,36 @@
-package modelo;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import modelo.Mascota;
 
 /**
  *
  * @author MI PC
  */
-//-----------Declaro la clase---------
-public class Consulta implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-//--------------- Atributos -----------------
+public class ConsultaDTO implements Serializable {
+    
+   //--------------- Atributos -----------------
     private String codigo;
     private String fecha;
-    private Mascota mascota;
+    private MascotaDTO mascota;
     private String diagnostico;
     private String tratamiento;
     private String medicamentos;
 
 //..............................................................................
     // Lista estática para registrar todas las consultas
-    public static ArrayList<Consulta> listaConsultas = new ArrayList<>();
+    public static ArrayList<ConsultaDTO> listaConsultas = new ArrayList<>();
 
 //..............................................................................
 //-------Creo metodo constructor-------
 
-    public Consulta(String codigo, String fecha, Mascota mascota, String diagnostico, String tratamiento, String medicamentos) {
+    public ConsultaDTO(String codigo, String fecha, MascotaDTO mascota, 
+            String diagnostico, String tratamiento, String medicamentos) {
         this.codigo = codigo;
         this.fecha = fecha;
         this.mascota = mascota;
@@ -54,11 +57,11 @@ public class Consulta implements Serializable {
         this.fecha = fecha;
     }
 
-    public Mascota getMascota() {
+    public MascotaDTO getMascota() {
         return mascota;
     }
 
-    public void setMascota(Mascota mascota) {
+    public void setMascota(MascotaDTO mascota) {
         this.mascota = mascota;
     }
 
@@ -86,16 +89,16 @@ public class Consulta implements Serializable {
         this.medicamentos = medicamentos;
     }
 
-    public static ArrayList<Consulta> getListaConsultas() {
+    public static ArrayList<ConsultaDTO> getListaConsultas() {
         return listaConsultas;
     }
 
-    public static void setListaConsultas(ArrayList<Consulta> listaConsultas) {
-        Consulta.listaConsultas = listaConsultas;
+    public static void setListaConsultas(ArrayList<ConsultaDTO> listaConsultas) {
+        ConsultaDTO.listaConsultas = listaConsultas;
     }
-    
-        
-//    --------metodo de la clase padre-----------------
+   
+
+    //---------metodo de la clase padre-----------------
 //    @Override
 //    public String mostrarDetalle() {
 //        return "----------------Consulta:--------------\n"
@@ -106,3 +109,5 @@ public class Consulta implements Serializable {
 //                + "Medicamentos: " + this.getMedicamentos() + "\n";
 //    }
 }
+
+

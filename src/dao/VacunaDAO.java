@@ -4,13 +4,13 @@
  */
 package dao;
 
+import dto.VacunaDTO;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import modelo.Vacuna;
 
 /**
  *
@@ -19,34 +19,40 @@ import modelo.Vacuna;
 public class VacunaDAO {
     private static final String ARCHIVO = "vacunas.dat";
 
-    public void guardarVacuna(Vacuna vacuna) {
-        ArrayList<Vacuna> vacunas = listar();
+     // Guarda una nueva vacuna
+    public void guardarVacuna(VacunaDTO vacuna) {
+        ArrayList<VacunaDTO> vacunas = listar();
         vacunas.add(vacuna);
         escribirArchivo(vacunas);
     }
 
-    public ArrayList<Vacuna> listar() {
+    // Lista todas las vacunas desde archivo
+   public ArrayList<VacunaDTO> listar() {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(ARCHIVO))) {
-            return (ArrayList<Vacuna>) in.readObject();
+            return (ArrayList<VacunaDTO>) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            return new ArrayList<>(); // Retorna vacía si no existe o error
+            // Si el archivo no existe o esta vacio, se retorna una lista vacia
+            return new ArrayList<>();
         }
     }
+    
 
+    // Elimina una vacuna por su fecha
     public boolean eliminarVacuna(String fecha) {
-        ArrayList<Vacuna> vacunas = listar();
-        boolean eliminado = vacunas.removeIf(v -> v.getFecha().equalsIgnoreCase(fecha));
+        ArrayList<VacunaDTO> vacunas = listar();
+        boolean eliminado = vacunas.removeIf(v -> v.getFechaVacuna().equalsIgnoreCase(fecha));
         if (eliminado) {
             escribirArchivo(vacunas);
         }
         return eliminado;
     }
-
-    public boolean editarVacuna(Vacuna vacunaActualizada) {
-        ArrayList<Vacuna> vacunas = listar();
+    
+    // Edita los datos de una vacuna existente
+     public boolean editarVacuna(VacunaDTO actualizada) {
+        ArrayList<VacunaDTO> vacunas = listar();
         for (int i = 0; i < vacunas.size(); i++) {
-            if (vacunas.get(i).getFecha().equalsIgnoreCase(vacunaActualizada.getFecha())) {
-                vacunas.set(i, vacunaActualizada);
+            if (vacunas.get(i).getFechaVacuna().equalsIgnoreCase(actualizada.getFechaVacuna())) {
+                vacunas.set(i, actualizada);
                 escribirArchivo(vacunas);
                 return true;
             }
@@ -54,24 +60,27 @@ public class VacunaDAO {
         return false;
     }
 
-    public Vacuna buscarVacuna(String fecha) {
-        for (Vacuna v : listar()) {
-            if (v.getFecha().equalsIgnoreCase(fecha)) {
+    // Busca una vacuna por su fecha
+     public VacunaDTO buscarVacuna(String fecha) {
+        for (VacunaDTO v : listar()) {
+            if (v.getFechaVacuna().equalsIgnoreCase(fecha)) {
                 return v;
             }
         }
         return null;
     }
 
-    public void guardarLista(ArrayList<Vacuna> lista) {
+    // Guarda toda la lista de vacunas en el archivo
+    public void guardarLista(ArrayList<VacunaDTO> lista) {
         escribirArchivo(lista);
     }
 
-    private void escribirArchivo(ArrayList<Vacuna> vacunas) {
+    // Escribe el archivo con la lista completa
+    private void escribirArchivo(ArrayList<VacunaDTO> vacunas) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ARCHIVO))) {
             out.writeObject(vacunas);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error al guardar archivo de vacunas: " + e.getMessage());
         }
     }
 }

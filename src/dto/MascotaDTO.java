@@ -3,7 +3,6 @@ package dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import modelo.EventoClinico_SuperClase;
 import modelo.Propietario;
 
 /**
@@ -20,7 +19,7 @@ public class MascotaDTO implements Serializable{
     private int peso;
      private Propietario propietario;
 
-    private ArrayList<EventoClinico_SuperClase> historial;
+//    private ArrayList<EventoClinico_SuperClase> historial;
 
 //............................................................................    
     // Lista estatica que guarda todas las mascotas registradas
@@ -39,7 +38,7 @@ public class MascotaDTO implements Serializable{
         this.raza = raza;
         this.peso = peso;
         this.propietario = propietario;
-        this.historial = new ArrayList<>();
+//        this.historial = new ArrayList<>();
     }
 
     public MascotaDTO() {
@@ -96,13 +95,13 @@ public class MascotaDTO implements Serializable{
         this.propietario = propietario;
     }
 
-    public ArrayList<EventoClinico_SuperClase> getHistorial() {
-        return historial;
-    }
-
-    public void setHistorial(ArrayList<EventoClinico_SuperClase> historial) {
-        this.historial = historial;
-    }
+//    public ArrayList<EventoClinico_SuperClase> getHistorial() {
+//        return historial;
+//    }
+//
+//    public void setHistorial(ArrayList<EventoClinico_SuperClase> historial) {
+//        this.historial = historial;
+//    }
 
     public static ArrayList<MascotaDTO> getListaMascotas() {
         return listaMascotas;
@@ -112,4 +111,26 @@ public class MascotaDTO implements Serializable{
         MascotaDTO.listaMascotas = listaMascotas;
     }
    
+    //----------------ANTES:Metodo de agregar consulta------------    
+    //-----------AHORA: guarda cualquier objeto que hereden de 
+    //EventoClinico_SuperClase en el historial de la mascota-------------
+//    public void guardarEvento(EventoClinico_SuperClase evento) {
+//        historial.add(evento);
+//    }
+
+    // Metodo para mostrar el historial de eventos clinicos
+    //forma polimorfica de registrar diferentes tipos de eventos en un solo metodo
+//    public String mostrarHistorial() {
+
+        //Se crea un objeto vacio de tipo StringBuilder, llamado sb
+        
+      //Aqui se iran acumulando los detalles de los eventos clinicos 
+      //(consultas,vacunas,citas,etc)
+//        StringBuilder sb = new StringBuilder();
+//        
+//        for (EventoClinico_SuperClase evenCli : historial) {
+//            sb.append(evenCli.mostrarDetalle()).append("\n");
+//        }
+//        return sb.toString();
+//    }
 }

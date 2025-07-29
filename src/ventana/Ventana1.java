@@ -292,9 +292,9 @@ public class Ventana1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemVerServiciosActionPerformed
 
     private void jMenuItemVerHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemVerHistorialActionPerformed
-        VentanaHistorial ventaHisto = new VentanaHistorial();
-        ventaHisto.setVisible(true);
-        this.dispose();
+//        VentanaHistorial ventaHisto = new VentanaHistorial();
+//        ventaHisto.setVisible(true);
+//        this.dispose();
     }//GEN-LAST:event_jMenuItemVerHistorialActionPerformed
 
     /**

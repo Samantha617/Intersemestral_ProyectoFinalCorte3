@@ -1,4 +1,8 @@
-package modelo;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,29 +11,29 @@ import java.util.ArrayList;
  *
  * @author MI PC
  */
-public class Vacuna implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    //--------atributos---------
+public class VacunaDTO implements Serializable {
+   //--------atributos---------
     private String fechaVacuna;
-    private Mascota mascota;
+    private MascotaDTO mascota;
     private String lote;
     private String tipoDeVacuna;
     private String proximaDosis;
 //..............................................................................
     // Lista estatica que guarda todas las vacunas registradas
-    public static ArrayList<Vacuna> listaVacunas = new ArrayList<>();
+    public static ArrayList<VacunaDTO> listaVacunas = new ArrayList<>();
 //..............................................................................    
 
     //-------constructor----------
 
-    public Vacuna(String fechaVacuna, Mascota mascota, String lote, String tipoDeVacuna, String proximaDosis) {
+    public VacunaDTO(String fechaVacuna, MascotaDTO mascota, String lote, String tipoDeVacuna, String proximaDosis) {
         this.fechaVacuna = fechaVacuna;
         this.mascota = mascota;
         this.lote = lote;
         this.tipoDeVacuna = tipoDeVacuna;
         this.proximaDosis = proximaDosis;
+    }
+
+    public VacunaDTO() {
     }
     
 
@@ -43,11 +47,11 @@ public class Vacuna implements Serializable {
         this.fechaVacuna = fechaVacuna;
     }
 
-    public Mascota getMascota() {
+    public MascotaDTO getMascota() {
         return mascota;
     }
 
-    public void setMascota(Mascota mascota) {
+    public void setMascota(MascotaDTO mascota) {
         this.mascota = mascota;
     }
 
@@ -75,12 +79,12 @@ public class Vacuna implements Serializable {
         this.proximaDosis = proximaDosis;
     }
 
-    public static ArrayList<Vacuna> getListaVacunas() {
+    public static ArrayList<VacunaDTO> getListaVacunas() {
         return listaVacunas;
     }
 
-    public static void setListaVacunas(ArrayList<Vacuna> listaVacunas) {
-        Vacuna.listaVacunas = listaVacunas;
+    public static void setListaVacunas(ArrayList<VacunaDTO> listaVacunas) {
+        VacunaDTO.listaVacunas = listaVacunas;
     }
     
 }
